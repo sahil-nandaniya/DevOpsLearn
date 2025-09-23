@@ -7,7 +7,7 @@ name: CI Pipeline for mydevops app
 on:
   push:
     branches: [ "main" ]
-  workworkflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -27,8 +27,12 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    - name: Check Version
+      run: dotnet --version
+    
     # Actual Code Related Command run 
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+      
