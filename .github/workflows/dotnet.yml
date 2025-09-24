@@ -36,3 +36,28 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
       
+  sonar_analysis:
+    needs: build  # Ensure this job runs after the 'build' job completes successfully
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout code again (since this is a new job)
+    - uses: actions/checkout@v4
+
+    # Install SonarScanner
+    - name: Install SonarQube Scanner
+      run: |
+        curl -sSLo sonarscanner.zip https://github.com/SonarSource/sonar-scanner-msbuild/releases/download/5.0.0.27378/sonar-scanner-msbuild-5.0.0.27378-linux-x86.zip
+        unzip sonarscanner.zip -d $HOME/.sonar
+        echo "$HOME/.sonar/sonar-scanner-msbuild-5.0.0.27378-linux-x86" >> $GITHUB_PATH
+
+    # Run SonarQube Scan
+    - name: Run SonarQube Scan
+      run: |
+        $HOME/.sonar/sonar-scanner-msbuild-5.0.0.27378-linux-x86/sonar-scanner-msbuild begin /k:"sahil-mydevops-app" /d:sonar.login="squ_7179aebba0859c3cad3751b986b38483845c0a37" /d:sonar.host.url="http://13.127.171.28:9000"
+        dotnet build --no-restore  # Rebuild to analyze
+        $HOME/.sonar/sonar-scanner-msbuild-5.0.0.27378-linux-x86/sonar-scanner-msbuild end /d:sonar.login="squ_7179aebba0859c3cad3751b986b38483845c0a37"
+    
+   
+      
+      
