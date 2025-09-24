@@ -25,6 +25,10 @@ app.MapGet("/error", () =>
     }
 });
 
+const string secretKey = "adkjsajiuecnsaldriueiwop";
+
+app.MapGet("/secret", () => Results.Text($"The secret key is: {secretKey}"));
+
 // Unvalidated redirect (open redirect)
 app.MapGet("/redirect", (HttpContext context) =>
 {
