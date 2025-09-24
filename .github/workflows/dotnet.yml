@@ -36,20 +36,26 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
-  sonarqube:
-    name: SonarQube Integration
+  security:
     runs-on: ubuntu-latest
-    
+    needs: build
     steps:
     - uses: actions/checkout@v4
+    - name: Use Node.js 24
+      uses: actions/setup-node@v4
       with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
-        fetch-depth: 0
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: 'squ_7179aebba0859c3cad3751b986b38483845c0a37'
-        SONAR_HOST_URL: 'http://13.127.171.28:9000/' 
-   
+        node-version: 18
+    - run: npm install
+    
+    - name: Install SonarQube Scanner
+      run: npm install -g sonar-scanner
+    - name: Run SonarQube Scan
+      run: |
+          sonar-scanner \
+            -Dsonar.projectKey=sahil-devops-project \
+            -Dsonar.sources=. \
+            -Dsonar.host.url='http://13.127.171.28:9000/' \
+            -Dsonar.login='squ_7179aebba0859c3cad3751b986b38483845c0a37'
+
       
       
