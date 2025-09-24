@@ -35,4 +35,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Move to build
+      run: cd bin/Debug/net8.0
+    - name: Run command
+      run: Start-Process "dotnet" "MyDevOpsApp.dll"
       
