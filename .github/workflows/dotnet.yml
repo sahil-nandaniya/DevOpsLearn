@@ -13,13 +13,19 @@ jobs:
   build:
   
     # this workflow will pickup the sandbox server available to run 
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
   
     # what software you need
     steps:
     
     # market place action - checkout version at version
     - uses: actions/checkout@v4
+
+    # market place action - setup dot net environment of specific version
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
 
     - name: Check Version
       run: dotnet --version
@@ -29,8 +35,4 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Move to build
-      run: cd bin/Debug/net8.0
-    - name: Run command
-      run: Start-Process "dotnet" "MyDevOpsApp.dll"
       
