@@ -40,22 +40,29 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js 24
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18
-    - run: npm install
-    
-    - name: Install SonarQube Scanner
-      run: npm install -g sonar-scanner
-    - name: Run SonarQube Scan
-      run: |
-          sonar-scanner \
-            -Dsonar.projectKey=sahil-devops-project \
-            -Dsonar.sources=. \
-            -Dsonar.host.url='http://13.127.171.28:9000/' \
-            -Dsonar.login='squ_7179aebba0859c3cad3751b986b38483845c0a37'
-
-      
-      
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Necessary for SonarCloud/SonarQube to analyze the full repo
+  
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+  
+      - name: SonarQube Begin Scan
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+          dotnet sonarscanner begin \
+            /k:"sahil-devops-project" \
+            /d:sonar.host.url='http://13.127.171.28:9000/' \
+            /d:sonar.login='squ_7179aebba0859c3cad3751b986b38483845c0a37' \
+            /d:sonar.cs.dotnet.tools.reports.path="./"
+  
+      - name: Build Project for SonarQube
+        run: dotnet build
+  
+      - name: SonarQube End Scan
+        run: dotnet sonarscanner end /d:sonar.login='squ_7179aebba0859c3cad3751b986b38483845c0a37'
+  
+        
+        
